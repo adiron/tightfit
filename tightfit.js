@@ -4,6 +4,8 @@
 
   $ = jQuery;
 
+  window.TIGHTFIT_DEBUG = false;
+
   find_width_in_pixels = function(width) {
     var result, _container;
     _container = $("<div></div>").css({
@@ -48,8 +50,10 @@
         var $source_elm, fontsize_ratio;
         $source_elm = $(source_elm);
         fontsize_ratio = (1.0 * find_width_in_pixels($source_elm.css("font-size"))) / find_width_in_pixels($source_elm.width());
-        console.log(fontsize_ratio);
-        return $source_elm.css("font-size", Math.floor(fontsize_ratio * target_width) + "px");
+        if (window.TIGHTFIT_DEBUG) {
+          console.log(fontsize_ratio);
+        }
+        return $source_elm.css("font-size", fontsize_ratio * target_width + "px");
       };
       return fit(this, target_width);
     }

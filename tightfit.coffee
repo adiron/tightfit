@@ -1,5 +1,7 @@
 $ = jQuery
 
+window.TIGHTFIT_DEBUG = false
+
 find_width_in_pixels = (width) ->
 	_container = $("<div></div>").css
 		"display": "none"
@@ -32,8 +34,8 @@ $.fn.extend
 		fit = (source_elm, target_width) ->
 			$source_elm = $ source_elm
 			fontsize_ratio = (1.0 * find_width_in_pixels $source_elm.css "font-size") / find_width_in_pixels $source_elm.width()
-			console.log fontsize_ratio
-			$source_elm.css("font-size", Math.floor(fontsize_ratio * target_width) + "px");
+			console.log fontsize_ratio if window.TIGHTFIT_DEBUG
+			$source_elm.css("font-size", fontsize_ratio * target_width + "px");
 
 			#_container.remove()
 		fit this, target_width
