@@ -1,0 +1,21 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>TightFit Test</title>
+
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+	<script src="tightfit.js"></script>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$("h1 > span").tightfit();
+		});
+		// $(window).resize(function() {
+		// 	$("h1 > span").tightfit($(this).width());
+		// });
+	</script>
+</head>
+<body>
+	<h1><span>woop woop woop (V)</span></h1>
+</body>
+</html>
