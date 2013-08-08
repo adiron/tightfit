@@ -6,6 +6,8 @@
 
   window.TIGHTFIT_DEBUG = false;
 
+  window.TIGHTFIT_ERROR_FACTOR = 0.95;
+
   find_width_in_pixels = function(width) {
     var result, _container;
     _container = $("<div></div>").css({
@@ -20,7 +22,7 @@
 
   $.fn.extend({
     tightfit: function(options) {
-      var fit, settings, target_width,
+      var f, ratio_fit, settings, target_width,
         _this = this;
       settings = {
         width: "parent",
@@ -30,32 +32,39 @@
       settings = $.extend(settings, options);
       if (settings.width === "parent") {
         target_width = this.parent().width();
+      } else if (typeof settings.width === "string") {
+        target_width = find_width_in_pixels(settings.width);
       } else {
-        if (typeof settings.width === "string") {
-          target_width = find_width_in_pixels(settings.width);
-        }
+        target_width = settings.width;
       }
       if (settings.bind_events) {
         if (settings.width === "parent") {
-          $(window).resize(function() {
-            return fit(_this, _this.parent().width());
-          });
+          f = function() {
+            return ratio_fit(_this, _this.parent().width());
+          };
         } else {
-          $(window).resize(function() {
-            return fit(_this, target_width);
-          });
+          f = function() {
+            return ratio_fit(_this, target_width);
+          };
         }
+        $(window).resize(f);
+        this.change(f);
       }
-      fit = function(source_elm, target_width) {
+      ratio_fit = function(source_elm, target_width) {
         var $source_elm, fontsize_ratio;
         $source_elm = $(source_elm);
-        fontsize_ratio = (1.0 * find_width_in_pixels($source_elm.css("font-size"))) / find_width_in_pixels($source_elm.width());
-        if (window.TIGHTFIT_DEBUG) {
-          console.log(fontsize_ratio);
+        if (!$source_elm.data("tightfit__fontsize_ratio")) {
+          fontsize_ratio = (1.0 * find_width_in_pixels($source_elm.css("font-size"))) / find_width_in_pixels($source_elm.width());
+          $source_elm.data("tightfit__fontsize_ratio", fontsize_ratio);
+        } else {
+          fontsize_ratio = $source_elm.data("tightfit__fontsize_ratio");
         }
-        return $source_elm.css("font-size", fontsize_ratio * target_width + "px");
+        if (window.TIGHTFIT_DEBUG) {
+          console.log("Ratio: " + fontsize_ratio);
+        }
+        return $source_elm.css("font-size", (fontsize_ratio * target_width) * window.TIGHTFIT_ERROR_FACTOR + "px");
       };
-      return fit(this, target_width);
+      return ratio_fit(this, target_width);
     }
   });
 
